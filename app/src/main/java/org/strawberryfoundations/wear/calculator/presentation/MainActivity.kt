@@ -7,12 +7,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.compose.foundation.pager.HorizontalPager
 import androidx.wear.compose.foundation.pager.rememberPagerState
@@ -21,9 +23,13 @@ import androidx.wear.compose.material3.HorizontalPageIndicator
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.TimeText
+import org.strawberryfoundations.wear.calculator.presentation.core.CurrencyIconOption
+import org.strawberryfoundations.wear.calculator.presentation.core.loadCurrencyIcon
+import org.strawberryfoundations.wear.calculator.presentation.core.saveCurrencyIcon
 import org.strawberryfoundations.wear.calculator.presentation.theme.WearCalculatorTheme
-import org.strawberryfoundations.wear.calculator.presentation.views.CalculatorMainView
 import org.strawberryfoundations.wear.calculator.presentation.views.BillView
+import org.strawberryfoundations.wear.calculator.presentation.views.CalculatorMainView
+import org.strawberryfoundations.wear.calculator.presentation.views.SettingsView
 
 
 // Class: MainActivity
@@ -46,10 +52,26 @@ fun MainView() {
         AppScaffold(
             timeText = { TimeText() }
         ) {
-            val initialPage = 1
-            val pagerState = rememberPagerState(initialPage = initialPage) { 2 }
+            val context = LocalContext.current
+
+            val initialPage = 0
+            val pagerState = rememberPagerState(initialPage = initialPage) { 3 }
+
             val displayTextState = remember { mutableStateOf("") }
             val currentExpressionState = remember { mutableStateOf("") }
+            var selectedCurrencyIcon by remember { mutableStateOf(CurrencyIconOption.default) }
+            var hasLoadedCurrencyIcon by remember { mutableStateOf(false) }
+
+            LaunchedEffect(context) {
+                selectedCurrencyIcon = loadCurrencyIcon(context)
+                hasLoadedCurrencyIcon = true
+            }
+
+            LaunchedEffect(selectedCurrencyIcon, hasLoadedCurrencyIcon, context) {
+                if (hasLoadedCurrencyIcon) {
+                    saveCurrencyIcon(context, selectedCurrencyIcon)
+                }
+            }
             
             ScreenScaffold { _ ->
                 Box(
@@ -71,7 +93,12 @@ fun MainView() {
                             1 -> BillView(
                                 displayText = displayTextState.value,
                                 currentExpression = currentExpressionState.value,
-                                isPageActive = pagerState.currentPage == 1
+                                isPageActive = pagerState.currentPage == 1,
+                                currencyIcon = selectedCurrencyIcon,
+                            )
+                            2 -> SettingsView(
+                                selectedCurrencyIcon = selectedCurrencyIcon,
+                                onCurrencyIconSelected = { selectedCurrencyIcon = it },
                             )
                         }
                     }

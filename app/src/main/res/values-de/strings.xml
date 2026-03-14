@@ -6,4 +6,22 @@
     <string name="people">Personen</string>
     <string name="total">Gesamtbetrag</string>
     <string name="each">Jeder %s</string>
+    <string name="settings">Einstellungen</string>
+    <string name="selected">Ausgewählt</string>
+    <string name="settings_currency_icon_title">Währungssymbol</string>
+    <string name="settings_currency_icon_description">Wähle das Icon für den Rechnungsmodus</string>
+    <string name="settings_currency_icon_pick_button">Icon auswählen</string>
+    <string name="settings_currency_icon_dialog_description">Wähle ein Icon für Trinkgeld und Gesamtbetrag</string>
+    <string name="close">Schließen</string>
+    <string name="currency_icon_payments">Zahlung</string>
+    <string name="currency_icon_dollar">Dollar</string>
+    <string name="currency_icon_euro">Euro</string>
+    <string name="currency_icon_pound">Pfund</string>
+    <string name="currency_icon_yen">Yen</string>
+    <string name="currency_icon_ruble">Rubel</string>
+    <string name="currency_icon_lira">Lira</string>
+    <string name="currency_icon_franc">Franc</string>
+    <string name="currency_icon_rupee">Rupie</string>
+    <string name="currency_icon_bitcoin">Bitcoin</string>
+    <string name="currency_icon_yuan">Yuan</string>
 </resources>

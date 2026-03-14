@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.focusable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Groups
-import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.runtime.Composable
@@ -52,6 +51,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import kotlinx.coroutines.delay
+import org.strawberryfoundations.wear.calculator.presentation.core.CurrencyIconOption
 import org.strawberryfoundations.wear.calculator.R
 import org.strawberryfoundations.wear.calculator.presentation.core.evaluateExpression
 import org.strawberryfoundations.wear.calculator.presentation.core.formatExpression
@@ -65,7 +65,8 @@ import kotlin.math.round
 fun BillView(
     displayText: String,
     currentExpression: String,
-    isPageActive: Boolean
+    isPageActive: Boolean,
+    currencyIcon: CurrencyIconOption,
 ) {
     val locale = LocalConfiguration.current.locales.get(0) ?: Locale.getDefault()
     val displayTextFormatted = formatExpression(displayText, locale).ifEmpty { "0" }
@@ -166,7 +167,7 @@ fun BillView(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Icon(
-                    imageVector = Icons.Rounded.Payments,
+                    imageVector = currencyIcon.icon,
                     contentDescription = stringResource(R.string.tip),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -219,7 +220,7 @@ fun BillView(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Icon(
-                    imageVector = Icons.Rounded.Payments,
+                    imageVector = currencyIcon.icon,
                     contentDescription = stringResource(R.string.total),
                 )
             }
