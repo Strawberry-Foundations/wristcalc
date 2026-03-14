@@ -24,9 +24,9 @@ import androidx.compose.material.icons.rounded.People
 import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -67,6 +67,8 @@ fun BillView(
     currentExpression: String,
     isPageActive: Boolean,
     currencyIcon: CurrencyIconOption,
+    tipPercentState: MutableIntState,
+    peopleCountState: MutableIntState,
 ) {
     val locale = LocalConfiguration.current.locales.get(0) ?: Locale.getDefault()
     val displayTextFormatted = formatExpression(displayText, locale).ifEmpty { "0" }
@@ -76,8 +78,8 @@ fun BillView(
     val view = LocalView.current
 
     var activeField by remember { mutableStateOf(ActiveField.Tip) }
-    var tipPercent by remember { mutableIntStateOf(5) }
-    var peopleCount by remember { mutableIntStateOf(1) }
+    var tipPercent by tipPercentState
+    var peopleCount by peopleCountState
     
     // Rotary accumulation logic
     var rotaryAccumulator by remember { mutableFloatStateOf(0f) }
@@ -138,7 +140,7 @@ fun BillView(
 
                     if (abs(rotaryAccumulator) >= rotaryThreshold) {
                         val steps = (rotaryAccumulator / rotaryThreshold).toInt()
-                        applyRotaryStep(-steps)
+                        applyRotaryStep(steps)
                         rotaryAccumulator %= rotaryThreshold
                     }
                     true

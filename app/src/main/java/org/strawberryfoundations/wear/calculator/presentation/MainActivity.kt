@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,6 +65,8 @@ fun MainView() {
 
             val displayTextState = remember { mutableStateOf("") }
             val currentExpressionState = remember { mutableStateOf("") }
+            val billTipPercentState = remember { mutableIntStateOf(5) }
+            val billPeopleCountState = remember { mutableIntStateOf(1) }
             var selectedCurrencyIcon by remember { mutableStateOf(CurrencyIconOption.default) }
             var hasLoadedCurrencyIcon by remember { mutableStateOf(false) }
 
@@ -105,6 +108,8 @@ fun MainView() {
                                         currentExpression = currentExpressionState.value,
                                         isPageActive = pagerState.currentPage == 1,
                                         currencyIcon = selectedCurrencyIcon,
+                                        tipPercentState = billTipPercentState,
+                                        peopleCountState = billPeopleCountState,
                                     )
                                     2 -> SettingsView(
                                         selectedCurrencyIcon = selectedCurrencyIcon,
