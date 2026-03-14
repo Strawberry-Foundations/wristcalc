@@ -17,12 +17,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.focusable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.People
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +32,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,26 +48,35 @@ import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
+import kotlinx.coroutines.delay
 import org.strawberryfoundations.wear.calculator.R
 import org.strawberryfoundations.wear.calculator.presentation.core.evaluateExpression
 import org.strawberryfoundations.wear.calculator.presentation.core.formatExpression
 import org.strawberryfoundations.wear.calculator.presentation.core.formatResult
 import java.util.Locale
+import kotlin.math.abs
 
 @Composable
 fun BillView(
-	displayText: String,
-	currentExpression: String
+    displayText: String,
+    currentExpression: String,
+    isPageActive: Boolean
 ) {
     val locale = LocalConfiguration.current.locales.get(0) ?: Locale.getDefault()
-    val displayTextFormatted = formatExpression(displayText, locale).ifEmpty { "67" }
+    val displayTextFormatted = formatExpression(displayText, locale).ifEmpty { "0" }
 
     val focusRequester = remember { FocusRequester() }
+    val haptic = LocalHapticFeedback.current
     val view = LocalView.current
 
     var activeField by remember { mutableStateOf(ActiveField.Tip) }
     var tipPercent by remember { mutableIntStateOf(5) }
     var peopleCount by remember { mutableIntStateOf(1) }
+    
+    // Rotary accumulation logic
+    var rotaryAccumulator by remember { mutableFloatStateOf(0f) }
+    val rotaryThreshold = 5f // Adjust this for sensitivity (higher = slower)
+
     val baseAmount = remember(displayText, currentExpression, locale) {
         parseBaseAmount(
             displayText = displayText,
@@ -74,15 +89,56 @@ fun BillView(
     val tipAmount = totalAmount?.let { it - baseAmount }
     val perPerson = totalAmount?.let { it / peopleCount }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        view.requestFocus()
+    fun applyRotaryStep(step: Int): Boolean {
+        if (step == 0) return false
+
+        when (activeField) {
+            ActiveField.Tip -> {
+                val oldValue = tipPercent
+                tipPercent = (tipPercent + step).coerceIn(0, 100)
+                if (oldValue != tipPercent) {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                }
+            }
+            ActiveField.People -> {
+                val oldValue = peopleCount
+                peopleCount = (peopleCount + step).coerceIn(1, 50)
+                if (oldValue != peopleCount) {
+                    haptic.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                }
+            }
+        }
+        return true
+    }
+
+    LaunchedEffect(isPageActive) {
+        if (isPageActive) {
+            delay(100)
+            try {
+                focusRequester.requestFocus()
+            } catch (e: Exception) {
+                // Ignore if not yet attachable
+            }
+            view.requestFocus()
+        }
     }
 
     ScreenScaffold {
         Column(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .onRotaryScrollEvent { event ->
+                    rotaryAccumulator += event.verticalScrollPixels
+
+                    if (abs(rotaryAccumulator) >= rotaryThreshold) {
+                        val steps = (rotaryAccumulator / rotaryThreshold).toInt()
+                        applyRotaryStep(-steps)
+                        rotaryAccumulator %= rotaryThreshold
+                    }
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(28.dp))
@@ -115,13 +171,12 @@ fun BillView(
 
             PillRow(
                 label = "${tipPercent}% ${stringResource(R.string.tip)}",
-                value = tipAmount.toString(),
+                value = tipAmount?.let { formatResult(it, locale) } ?: "-",
                 icon = Icons.Rounded.Payments,
                 isActive = activeField == ActiveField.Tip,
                 onClick = {
                     activeField = ActiveField.Tip
                     focusRequester.requestFocus()
-                    view.requestFocus()
                 }
             )
 
@@ -135,7 +190,6 @@ fun BillView(
                 onClick = {
                     activeField = ActiveField.People
                     focusRequester.requestFocus()
-                    view.requestFocus()
                 }
             )
 
@@ -149,7 +203,11 @@ fun BillView(
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = totalAmount?.let { formatResult(it, locale) } ?: "-",
+                    text = if (peopleCount > 1) {
+                         perPerson?.let { formatResult(it, locale) } ?: "-"
+                    } else {
+                         totalAmount?.let { formatResult(it, locale) } ?: "-"
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontSize = 24.sp,
@@ -158,37 +216,22 @@ fun BillView(
                 )
             }
 
-            if (peopleCount == 1) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 2.dp, end = 32.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        text = stringResource(R.string.total),
-                        modifier = Modifier.fillMaxWidth(),
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.End
-                    )
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 2.dp, end = 32.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = if (peopleCount > 1) "pro Person" else stringResource(R.string.total),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.End
+                )
             }
         }
     }
-    
-    /*
-    Spacer(modifier = Modifier.size(4.dp))
-
-    Text(
-        text = perPerson?.let { formatResult(it, locale) } ?: "-",
-        style = MaterialTheme.typography.titleMedium
-    )
-    Text(
-        text = "each",
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    ) */
 }
 
 @Composable
@@ -280,9 +323,9 @@ private fun parseBaseAmount(
         .replace(symbols.decimalSeparator, '.')
         .toDoubleOrNull()
 
-    if (fromDisplay != null) return fromDisplay
+    if (fromDisplay != null && fromDisplay > 0) return fromDisplay
 
     return runCatching {
         if (currentExpression.isBlank()) null else evaluateExpression(currentExpression)
-    }.getOrNull()
+    }.getOrNull()?.takeIf { it > 0 }
 }

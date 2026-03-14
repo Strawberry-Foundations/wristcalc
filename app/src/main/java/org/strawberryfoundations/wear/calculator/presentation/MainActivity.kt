@@ -70,7 +70,8 @@ fun MainView() {
                             )
                             1 -> BillView(
                                 displayText = displayTextState.value,
-                                currentExpression = currentExpressionState.value
+                                currentExpression = currentExpressionState.value,
+                                isPageActive = pagerState.currentPage == 1
                             )
                         }
                     }
