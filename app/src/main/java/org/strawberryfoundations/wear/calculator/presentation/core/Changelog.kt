@@ -9,6 +9,14 @@ data class ChangelogEntry(
 object Changelog {
     val entries = listOf(
         ChangelogEntry(
+            version = "1.0.1",
+            date = "Mar 14, 2026",
+            changes = listOf(
+                "Fixed scroll logic (rotaryStep) in bill split view",
+                "Fixed resetting bill split values when navigating away from the bill split view",
+            )
+        ),
+        ChangelogEntry(
             version = "1.0.0",
             date = "Mar 14, 2026",
             changes = listOf(
