@@ -1,4 +1,6 @@
-# Wear Calculator (Wear OS)
+<div align="center">
+    <h1>⌚ Wear Calculator (Wear OS)</h1>
+</div>
 
 <p align="center">
 	<img src="assets/screenshot1.png" alt="Calculator screen" width="220" style="border-radius: 100%"/>
