@@ -9,6 +9,14 @@ data class ChangelogEntry(
 object Changelog {
     val entries = listOf(
         ChangelogEntry(
+            version = "1.0.3",
+            date = "Apr 7, 2026",
+            changes = listOf(
+                "New app name",
+                "Gradle build config update to match Google's AGP 9.x version",
+            )
+        ),
+        ChangelogEntry(
             version = "1.0.2",
             date = "Mar 29, 2026",
             changes = listOf(
