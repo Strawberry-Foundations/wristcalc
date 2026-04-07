@@ -112,8 +112,8 @@ class GoogleSansFlex {
             R.font.google_sans_flex,
             variationSettings = FontVariation.Settings(
                 settings = arrayOf(
-                    FontVariation.weight(900),
-                    FontVariation.width(105f),
+                    FontVariation.weight(800),
+                    FontVariation.width(103f),
                     FontVariation.grade(0),
                     FontVariation.Setting("ROND", 100f)
                 )
