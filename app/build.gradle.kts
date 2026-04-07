@@ -1,23 +1,21 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
 }
 
-android {
+configure<ApplicationExtension> {
     namespace = "org.strawberryfoundations.wear.calculator"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.strawberryfoundations.wear.calculator"
         minSdk = 33
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.0.2"
-
+        versionCode = 103_001
+        versionName = "1.0.3"
     }
 
     buildTypes {
@@ -31,8 +29,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     useLibrary("wear-sdk")
     buildFeatures {
@@ -41,7 +39,7 @@ android {
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(17)
 }
 
 dependencies {
