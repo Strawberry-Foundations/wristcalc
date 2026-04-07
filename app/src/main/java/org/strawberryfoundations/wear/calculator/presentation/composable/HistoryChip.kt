@@ -33,7 +33,7 @@ fun HistoryChip(
         modifier = Modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
             .clickable(onClick = onClick)
             .padding(start = 12.dp, top = 2.dp, end = 6.dp, bottom = 2.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),

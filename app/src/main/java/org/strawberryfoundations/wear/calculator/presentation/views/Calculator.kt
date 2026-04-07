@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -22,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.pager.VerticalPager
 import androidx.wear.compose.foundation.pager.rememberPagerState
@@ -30,6 +34,9 @@ import androidx.wear.compose.material3.VerticalPageIndicator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import org.strawberryfoundations.wear.calculator.R
+import org.strawberryfoundations.wear.calculator.presentation.composable.PagerChangePopup
+import org.strawberryfoundations.wear.calculator.presentation.composable.PagerPageMeta
 import org.strawberryfoundations.wear.calculator.presentation.composable.CalculatorDisplay
 import org.strawberryfoundations.wear.calculator.presentation.composable.KeypadGrid
 import org.strawberryfoundations.wear.calculator.presentation.core.HistoryEntry
@@ -108,6 +115,17 @@ fun CalculatorMainView(
                 .align(Alignment.CenterEnd)
                 .padding(end = 6.dp),
             selectedColor = MaterialTheme.colorScheme.onSurface,
+        )
+
+        PagerChangePopup(
+            currentPage = pagerState.currentPage,
+            pageMetaByIndex = listOf(
+                PagerPageMeta(Icons.Rounded.Payments, stringResource(R.string.pager_page_calculator)),
+                PagerPageMeta(Icons.Rounded.History, stringResource(R.string.pager_page_history)),
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 24.dp),
         )
     }
 }

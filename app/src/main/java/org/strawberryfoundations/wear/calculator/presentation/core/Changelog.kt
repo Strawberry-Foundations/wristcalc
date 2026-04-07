@@ -13,6 +13,8 @@ object Changelog {
             date = "Apr 7, 2026",
             changes = listOf(
                 "New app name",
+                "Added small pop-up when changing the view",
+                "Previous history entries are now reusable",
                 "Gradle build config update to match Google's AGP 9.x version",
             )
         ),

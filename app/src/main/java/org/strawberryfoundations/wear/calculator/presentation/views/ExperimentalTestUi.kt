@@ -7,7 +7,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -20,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -33,6 +38,9 @@ import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
+import org.strawberryfoundations.wear.calculator.R
+import org.strawberryfoundations.wear.calculator.presentation.composable.PagerChangePopup
+import org.strawberryfoundations.wear.calculator.presentation.composable.PagerPageMeta
 import kotlin.math.abs
 import kotlin.math.PI
 import kotlin.math.sin
@@ -68,6 +76,17 @@ fun ExperimentalTestUiView() {
             pagerCurrentPage = pagerState.currentPage,
             scrollState = statePage1,
             modifier = Modifier.align(Alignment.CenterEnd),
+        )
+
+        PagerChangePopup(
+            currentPage = pagerState.currentPage,
+            pageMetaByIndex = listOf(
+                PagerPageMeta(Icons.Rounded.Payments, stringResource(R.string.pager_page_number, 1)),
+                PagerPageMeta(Icons.Rounded.History, stringResource(R.string.pager_page_number, 2)),
+            ),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 24.dp),
         )
     }
 }

@@ -6,6 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Payments
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.VolunteerActivism
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.compose.foundation.pager.HorizontalPager
 import androidx.wear.compose.foundation.pager.rememberPagerState
@@ -27,6 +34,9 @@ import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import org.strawberryfoundations.wear.calculator.R
+import org.strawberryfoundations.wear.calculator.presentation.composable.PagerChangePopup
+import org.strawberryfoundations.wear.calculator.presentation.composable.PagerPageMeta
 import org.strawberryfoundations.wear.calculator.presentation.core.CurrencyIconOption
 import org.strawberryfoundations.wear.calculator.presentation.core.loadCurrencyIcon
 import org.strawberryfoundations.wear.calculator.presentation.core.saveCurrencyIcon
@@ -130,6 +140,18 @@ fun MainView() {
                                 pagerState = pagerState,
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 selectedColor = MaterialTheme.colorScheme.onSurface,
+                            )
+
+                            PagerChangePopup(
+                                currentPage = pagerState.currentPage,
+                                pageMetaByIndex = listOf(
+                                    PagerPageMeta(Icons.Rounded.Payments, stringResource(R.string.pager_page_calculator)),
+                                    PagerPageMeta(Icons.Rounded.VolunteerActivism, stringResource(R.string.pager_page_tip)),
+                                    PagerPageMeta(Icons.Rounded.Settings, stringResource(R.string.pager_page_settings)),
+                                ),
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .padding(top = 24.dp),
                             )
                         }
                     }
