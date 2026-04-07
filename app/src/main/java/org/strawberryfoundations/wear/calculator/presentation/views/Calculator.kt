@@ -14,6 +14,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -28,6 +29,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.VerticalPageIndicator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import org.strawberryfoundations.wear.calculator.presentation.composable.CalculatorDisplay
 import org.strawberryfoundations.wear.calculator.presentation.composable.KeypadGrid
 import org.strawberryfoundations.wear.calculator.presentation.core.HistoryEntry
@@ -36,10 +38,10 @@ import org.strawberryfoundations.wear.calculator.presentation.core.evaluateExpre
 import org.strawberryfoundations.wear.calculator.presentation.core.formatExpression
 import org.strawberryfoundations.wear.calculator.presentation.core.formatResult
 import org.strawberryfoundations.wear.calculator.presentation.core.loadHistory
+import org.strawberryfoundations.wear.calculator.presentation.core.normalizeResultForExpression
 import org.strawberryfoundations.wear.calculator.presentation.core.saveHistory
 import java.text.DecimalFormatSymbols
 import java.util.Locale
-
 
 @Composable
 fun CalculatorMainView(
@@ -47,6 +49,7 @@ fun CalculatorMainView(
     currentExpressionState: MutableState<String>
 ) {
     val pagerState = rememberPagerState(initialPage = 0) { 2 }
+    val coroutineScope = rememberCoroutineScope()
     val history = remember { mutableStateListOf<HistoryEntry>() }
     val context = LocalContext.current
     val edgePadding = 12.dp
@@ -83,7 +86,19 @@ fun CalculatorMainView(
                     displayTextState = displayTextState,
                     currentExpressionState = currentExpressionState
                 )
-                1 -> HistoryView(history = history)
+                1 -> HistoryView(
+                    history = history,
+                    onHistorySelected = { entry ->
+                        displayTextState.value = entry.result
+                        currentExpressionState.value = normalizeResultForExpression(
+                            entry.result,
+                            Locale.getDefault(),
+                        )
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                    },
+                )
             }
         }
 

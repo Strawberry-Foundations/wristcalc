@@ -14,6 +14,7 @@
     <string name="settings_currency_icon_description">Wähle das Icon für den Rechnungsmodus</string>
     <string name="settings_currency_icon_pick_button">Icon auswählen</string>
     <string name="settings_currency_icon_dialog_description">Wähle ein Icon für Trinkgeld und Gesamtbetrag</string>
+    <string name="delete_history_entry">History-Eintrag löschen</string>
     <string name="close">Schließen</string>
     <string name="currency_icon_payments">Zahlung</string>
     <string name="currency_icon_dollar">Dollar</string>

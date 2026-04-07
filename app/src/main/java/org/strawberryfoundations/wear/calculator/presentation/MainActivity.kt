@@ -34,6 +34,7 @@ import org.strawberryfoundations.wear.calculator.presentation.theme.WearCalculat
 import org.strawberryfoundations.wear.calculator.presentation.views.BillView
 import org.strawberryfoundations.wear.calculator.presentation.views.CalculatorMainView
 import org.strawberryfoundations.wear.calculator.presentation.views.ChangelogView
+import org.strawberryfoundations.wear.calculator.presentation.views.ExperimentalTestUiView
 import org.strawberryfoundations.wear.calculator.presentation.views.SettingsView
 
 
@@ -83,7 +84,8 @@ fun MainView() {
             
             SwipeDismissableNavHost(
                 navController = navController,
-                startDestination = "main",
+                // startDestination = "main",
+                startDestination = "debug",
             ) {
                 composable(route = "main") {
                     ScreenScaffold { _ ->
@@ -117,6 +119,9 @@ fun MainView() {
                                         onNavigateToChangelog = {
                                             navController.navigate("changelog")
                                         },
+                                        onDebugClick = {
+                                            navController.navigate("debug")
+                                        },
                                     )
                                 }
                             }
@@ -132,6 +137,10 @@ fun MainView() {
 
                 composable(route = "changelog") {
                     ChangelogView()
+                }
+
+                composable(route = "debug") {
+                    ExperimentalTestUiView()
                 }
             }
         }

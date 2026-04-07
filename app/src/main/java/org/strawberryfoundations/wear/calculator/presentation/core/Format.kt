@@ -98,3 +98,12 @@ fun parseBaseAmount(
         if (currentExpression.isBlank()) null else evaluateExpression(currentExpression)
     }.getOrNull()?.takeIf { it > 0 }
 }
+
+
+fun normalizeResultForExpression(result: String, locale: Locale): String {
+    val symbols = DecimalFormatSymbols.getInstance(locale)
+
+    return result
+        .replace(symbols.groupingSeparator.toString(), "")
+        .replace(symbols.decimalSeparator, '.')
+}

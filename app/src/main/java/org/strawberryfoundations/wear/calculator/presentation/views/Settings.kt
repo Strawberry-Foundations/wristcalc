@@ -1,6 +1,7 @@
 package org.strawberryfoundations.wear.calculator.presentation.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +18,12 @@ import androidx.compose.material.icons.rounded.Newspaper
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -52,6 +57,7 @@ fun SettingsView(
     selectedCurrencyIcon: CurrencyIconOption,
     onCurrencyIconSelected: (CurrencyIconOption) -> Unit,
     onNavigateToChangelog: () -> Unit,
+    onDebugClick: () -> Unit,
 ) {
     val listState = rememberScalingLazyListState()
     val rotaryFocusRequester = remember { FocusRequester() }
@@ -200,10 +206,31 @@ fun SettingsView(
                         .padding(horizontal = 20.dp, vertical = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    var clickCount by remember { mutableIntStateOf(0) }
+                    var lastClickTime by remember { mutableLongStateOf(0L) }
+
                     Image(
                         painter = painterResource(R.drawable.app),
                         contentDescription = null,
-                        modifier = Modifier.size(36.dp),
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                            ) {
+                                val currentTime = System.currentTimeMillis()
+                                if (currentTime - lastClickTime < 500) {
+                                    clickCount++
+                                } else {
+                                    clickCount = 1
+                                }
+                                lastClickTime = currentTime
+
+                                if (clickCount >= 5) {
+                                    clickCount = 0
+                                    onDebugClick()
+                                }
+                            },
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))

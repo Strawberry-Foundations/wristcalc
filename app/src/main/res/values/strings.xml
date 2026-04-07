@@ -14,6 +14,7 @@
     <string name="settings_currency_icon_description">Choose the icon used in bill mode</string>
     <string name="settings_currency_icon_pick_button">Choose icon</string>
     <string name="settings_currency_icon_dialog_description">Select one icon for tips and totals</string>
+    <string name="delete_history_entry">Delete history entry</string>
     <string name="close">Close</string>
     <string name="currency_icon_payments">Payments</string>
     <string name="currency_icon_dollar">Dollar</string>

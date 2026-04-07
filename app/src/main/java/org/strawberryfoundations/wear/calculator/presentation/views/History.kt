@@ -25,7 +25,10 @@ import org.strawberryfoundations.wear.calculator.presentation.core.HistoryEntry
 
 
 @Composable
-fun HistoryView(history: SnapshotStateList<HistoryEntry>) {
+fun HistoryView(
+    history: SnapshotStateList<HistoryEntry>,
+    onHistorySelected: (HistoryEntry) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +64,9 @@ fun HistoryView(history: SnapshotStateList<HistoryEntry>) {
             itemsIndexed(history, key = { index, _ -> index }) { index, entry ->
                 HistoryChip(
                     entry = entry,
+                    onClick = {
+                        onHistorySelected(entry)
+                    },
                     onDelete = {
                         if (index in history.indices) {
                             history.removeAt(index)
