@@ -14,6 +14,7 @@ object Changelog {
             changes = listOf(
                 "Updated AGP to v9.2.0",
                 "Dependency updates",
+                "Improve visibility handling in PagerChangePopup",
             )
         ),
         ChangelogEntry(
