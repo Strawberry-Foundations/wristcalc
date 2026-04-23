@@ -42,18 +42,26 @@ fun PagerChangePopup(
 ) {
     var visible by remember { mutableStateOf(false) }
     var lastPage by remember { mutableIntStateOf(currentPage) }
+    var pageChangeToken by remember { mutableIntStateOf(0) }
     var currentMeta by remember { mutableStateOf(pageMetaByIndex.getOrNull(currentPage)) }
 
     LaunchedEffect(currentPage, pageMetaByIndex) {
         if (currentPage == lastPage) return@LaunchedEffect
 
-        currentMeta = pageMetaByIndex.getOrNull(currentPage)
-        if (currentMeta != null) {
-            visible = true
-            delay(850)
-            visible = false
-        }
         lastPage = currentPage
+        currentMeta = pageMetaByIndex.getOrNull(currentPage)
+        pageChangeToken++
+    }
+
+    LaunchedEffect(pageChangeToken) {
+        if (currentMeta == null) {
+            visible = false
+            return@LaunchedEffect
+        }
+
+        visible = true
+        delay(850)
+        visible = false
     }
 
     AnimatedVisibility(
