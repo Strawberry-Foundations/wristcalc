@@ -46,9 +46,10 @@ import org.strawberryfoundations.wear.calculator.presentation.core.CurrencyIconO
 import org.strawberryfoundations.wear.calculator.presentation.core.formatExpression
 import org.strawberryfoundations.wear.calculator.presentation.core.formatPrice
 import org.strawberryfoundations.wear.calculator.presentation.core.parseBaseAmount
-import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.round
+import androidx.compose.ui.platform.LocalLocale
+import kotlin.time.Duration.Companion.milliseconds
 
 private enum class ActiveField {
     Tip,
@@ -64,7 +65,7 @@ fun BillView(
     tipPercentState: MutableIntState,
     peopleCountState: MutableIntState,
 ) {
-    val locale = LocalConfiguration.current.locales.get(0) ?: Locale.getDefault()
+    val locale = LocalConfiguration.current.locales.get(0) ?: LocalLocale.current.platformLocale
     val displayTextFormatted = formatExpression(displayText, locale).ifEmpty { "0" }
 
     val focusRequester = remember { FocusRequester() }
@@ -115,7 +116,7 @@ fun BillView(
 
     LaunchedEffect(isPageActive) {
         if (isPageActive) {
-            delay(100)
+            delay(100.milliseconds)
             try {
                 focusRequester.requestFocus()
             } catch (_: Exception) {
